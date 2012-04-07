@@ -305,7 +305,8 @@ void getColumn(streaming chanend cLedData, unsigned short buffers[NUM_MODULES_X*
     {
       int val = (tbuf, char[])[(y << 2) + c + 1];
       
-      val = bitrev(gammaLUT[ 2- c ][val]) >> 16;
+      //val = bitrev(gammaLUT[ 2- c ][val]) >> 16;
+      val = bitrev(val)>>16;
       val = (val * intensityadjust[ 2- c ]) >> 8;
       
       buffers[yptr + y][c] = val;
