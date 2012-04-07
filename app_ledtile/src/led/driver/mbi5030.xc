@@ -257,10 +257,14 @@ int leddrive_mbi5030_pins(streaming chanend c,
       
       if (drivernum == (BUFFER_SIZE/LEDS_PER_DRIVER) - 1)
       {
-        if (channel == LEDS_PER_DRIVER - 1)
-          partout(p_spi_ltch, 16, GLOBL_LATCH);
-        else
+        if (channel == LEDS_PER_DRIVER - 1) {
+        	partout(p_spi_ltch, 16, LOCAL_LATCH);
+		    p_spi_clk <: 0x55555555;
+        	partout(p_spi_ltch, 16, GLOBL_LATCH);
+        }
+        else {
           partout(p_spi_ltch, 16, LOCAL_LATCH);
+        }
       }
       else
       {
