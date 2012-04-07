@@ -37,6 +37,9 @@
 //default color for gamma test (or something similar)
 #define DIV 1
 
+// Will waith SHIFT_DELAY frames and then shift buffer one column
+#define SHIFT_DELAY 64
+
 // ------------------------------
 //TODO is the unsafe array needed?
 #pragma unsafe arrays
@@ -56,6 +59,10 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
   //the part of the buffer to read from
   unsigned outbufptr=LED_BUFFER_FRAME_SIZE;
   
+  // current frame count
+  unsigned frame_count = 0;
+  // current column shift
+  unsigned shift = 0;
   
   // Initialise the buffer to the specified test pattern
   // ---------------------------------------------------
@@ -188,6 +195,11 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
       case cOut :> pixelptr:
         if (pixelptr == -1)
         {
+		  frame_count++;
+		  if (frame_count == SHIFT_DELAY) {
+			  frame_count = 0;
+			  shift = (shift + 1) % LED_BUFFER_HEIGHT;
+		  }
           // End of frame signal from display driver
           // If the source wants us to swap, do so
           if (bufswaptriggerN == 0)
@@ -218,15 +230,17 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
 #else
           //output the data column wise
           pixelptr *= LED_BUFFER_COLORS;
-          pixelptr += outbufptr;
+          pixelptr += shift * LED_BUFFER_ROW_SIZE;
+
           for (int i=0; i<FRAME_HEIGHT; i++)
           {
-            cOut <: (char)buffer[pixelptr+2];
-            cOut <: (char)buffer[pixelptr+1];
-            cOut <: (char)buffer[pixelptr];
-            cOut <: (char)0;
-            //move to the next pixel in the row
-            pixelptr += LED_BUFFER_ROW_SIZE;
+        	  cOut <: (char)buffer[outbufptr + pixelptr+2];
+			  cOut <: (char)buffer[outbufptr + pixelptr+1];
+			  cOut <: (char)buffer[outbufptr + pixelptr];
+			  cOut <: (char)0;
+
+			  //move to the next pixel in the row
+			  pixelptr = (pixelptr + LED_BUFFER_ROW_SIZE) % LED_BUFFER_FRAME_SIZE;
           }
 #endif
         }
