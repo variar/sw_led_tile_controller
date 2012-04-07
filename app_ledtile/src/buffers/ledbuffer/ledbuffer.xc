@@ -18,6 +18,14 @@
 #include "logo.h"
 
 #define SWAP(a,b)      {a -= b; b += a; a = b - a;}
+
+#ifndef max
+    #define max(a,b) (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef min
+    #define min(a,b) (((a) < (b)) ? (a) : (b))
+#endif
+
 //should the buffer be rotate by 90 degrees while outputing data
 //by default no - since the data is fed in and put out by columns
 //TODO shouldn't the driver decide this??
@@ -27,11 +35,11 @@
 #ifndef SIMULATION
 
 //#define SINGLELINETEST
-#define SHADETESTX
+//#define SHADETESTX
 //#define SHADETESTY
 //#define GAMMATEST 100
 //#define LOGO
-//#define TEST_IMG
+#define TEST_IMG
 
 #ifdef TEST_IMG
 #include "test_img.h"
@@ -79,8 +87,8 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
 #endif
 
 #if defined TEST_IMG
-    for(int y=0; y<IMAGE_HEIGHT; ++y) {
-      	for (int x=0; x<IMAGE_WIDTH; ++x) {
+    for(int y=0; y<min(IMAGE_HEIGHT,FRAME_WIDTH); ++y) {
+      	for (int x=0; x<min(IMAGE_WIDTH,LED_BUFFER_HEIGHT); ++x) {
       		for (int c=0; c<LED_BUFFER_COLORS; ++c) {
       			buffer[ptr] = image_raw[ptr];
       			buffer[LED_BUFFER_FRAME_SIZE + ptr] = buffer[ptr];
