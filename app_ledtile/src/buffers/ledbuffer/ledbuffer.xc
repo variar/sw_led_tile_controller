@@ -31,6 +31,11 @@
 //#define SHADETESTY
 //#define GAMMATEST 100
 //#define LOGO
+//#define TEST_IMG
+
+#ifdef TEST_IMG
+#include "test_img.h"
+#endif
 
 #endif
 
@@ -72,8 +77,18 @@ void ledbuffer(chanend cIn, streaming chanend cOut)
     for (int buf=0; buf < LED_BUFFER_BUFFER_SIZE; buf++)
       buffer[buf] = 0;
 #endif
-    
-#if defined SINGLELINETEST
+
+#if defined TEST_IMG
+    for(int y=0; y<IMAGE_HEIGHT; ++y) {
+      	for (int x=0; x<IMAGE_WIDTH; ++x) {
+      		for (int c=0; c<LED_BUFFER_COLORS; ++c) {
+      			buffer[ptr] = image_raw[ptr];
+      			buffer[LED_BUFFER_FRAME_SIZE + ptr] = buffer[ptr];
+      			ptr++;
+      		}
+      	}
+      }
+#elif defined SINGLELINETEST
     for (int buf=0; buf < 2; buf ++)
     {
   	  for (int y=0; y < FRAME_HEIGHT; y++)
