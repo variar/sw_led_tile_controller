@@ -370,6 +370,8 @@ int leddrive_mbi5031(streaming chanend cLedData, streaming chanend cLedCmd, chan
       b_clk, b_data, b_gsclk, b_ref
   );
   
+  ledprocess_init();
+
   t :> now;
   
   while (1)

@@ -43,6 +43,8 @@
 #define PORT_XMOS          306
 //#define PER_PIXEL_ADJUSTMENT
 
+#define GAMMA_CORRECTION
+
 /*
  * COLOUR PROCESSING
  *

@@ -308,9 +308,14 @@ void getColumn(streaming chanend cLedData, unsigned short buffers[NUM_MODULES_X*
     for (int c=0; c<3; c++)
     {
       int val = (tbuf, char[])[(y << 2) + c + 1];
-      
-      //val = bitrev(gammaLUT[ 2- c ][val]) >> 16;
-      val = bitrev(val)>>16;
+
+#ifdef GAMMA_CORRECTION
+      val = bitrev(gammaLUT[2-c][val]) >> 16;
+#else
+      // this line is from examples in led-controller.pdf
+      val = (val & 0xff) * (val & 0xff);
+#endif
+
       val = (val * intensityadjust[ 2- c ]) >> 8;
       
       buffers[yptr + y][c] = val;
@@ -378,6 +383,8 @@ int leddrive_mbi5030(streaming chanend cLedData, streaming chanend cLedCmd, chan
       b_clk, b_data, b_gsclk, b_ref
   );
   
+  ledprocess_init();
+
   t :> now;
   
   while (1)
